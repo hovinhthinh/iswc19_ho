@@ -1,0 +1,161 @@
+%!TEX root = ../main.tex
+
+\section{Evaluation}
+We run experiments on a Linux machine with 80 CPU cores, 500GB RAM, and 2 GPUs. To evaluate Qsearch, we perform an intrinsic evaluation of our {\em Qfact extraction model} and an extrinsic evaluation of the {\em end-to-end Qsearch system}.
+\subsubsection{Dataset.} All experiments use a large collection of news articles, compiled from two real world datasets: the \textit{STICS} project \cite{DBLP:conf/sigir/HoffartMW14} with news from 2014 to 2018, 
+and the \textit{New York Times} archive
+\cite{nyt}
+ %5843811 + 1765538
+with news from 1986 to 2008.
+In total, our corpus consists of 7.6M documents.
+ 
+\subsection{Intrinsic Evaluation of the Quantity Fact Extraction Model}
+%We conduct intrinsic evaluation to examine the quality of our Qfact extraction model of the %\textit{Extract} stage.
+\subsubsection{Training setup.}
+We implemented the  LSTM network using Theano library,
+largely following \cite{DBLP:conf/acl/HeLLZ17a} for the training 
+configuration: using Adadelta with $\epsilon = 1e^6$ and $\rho = 0.95$;  \textit{lstm\_hidden\_unit = 300}; \textit{rnn\_dropout\_prob = 0.1}; \textit{batch\_size = 100}.
+
+We extracted training samples from the corpus using the distant-supervision technique as described in Section \ref{sec:extract} and conducted the training process with different settings. 
+In the \textit{General} setting, we use all available training data
+of 3.2M training samples, where we maintain the ratio 3:1 between the number of positive and negative samples.
+We also train our model for three other 
+\textit{measure-specific} settings, where only a subset of the training samples is used. In particular, we classify training samples into different categories based on the quantity unit. For example, training samples containing quantities with unit \textit{Kilometer} or \textit{Meter} are chosen to train the model in the \textit{Length} setting, while the ones with unit \textit{US dollar}, \textit{Euro}, etc. are picked for the \textit{Money} setting. 
+Among many such categories, we selected the three most prevalent measures \textit{Money}, \textit{Percentage} and \textit{Length}, containing 307K, 235K and 41K training samples, respectively (also with ratio 3:1  between positive and negative samples). 
+%to train the corresponding models. 
+The trained models are then applied to the entire corpus to extract more Qfacts. 
+%Note that the input for the trained models should be compatible with their trained settings.
+
+\subsubsection{Performance of Extraction model.}
+As the test data does not have any ground-truth labels, 
+we randomly selected 100 samples that contain at least two entities from the output tag sequences, for each training model, and manually assessed their validity.
+\input{tables/tagging_quality}
+We evaluate the quality of the three output labels \textit{<E>}, \textit{<X>} and \textit{<O>} by three measures: \textit{Precision}, \textit{Recall}, and \textit{F1 score}.
+The results are shown in Table \ref{table:extract_quality}. 
+We observe that all training models perform very well on entity tagging with more than 85\% \textit{F1 score}. 
+%This assures that our model can efficiently identify the referred entity for a given quantity. 
+%The results also show that the extraction models can capture around 70\% of correct context %tokens of the Qfacts.
+We also see that the measure-specific training variants for Length and Money
+have slight advantages.
+
+%Moreover, the extraction model also achieves at least 90\% accuracy in identifying \textit{<O>} tag, which helps to reduce the noisy candidates for answer generation step. 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Extrinsic Evaluation of the End-to-End Qsearch System}
+We performed the extrinsic evaluation of Qsearch 
+on a benchmark of 100  quantity queries, collected by crowdsourcing
+and covering four domains: \textit{Finance}, \textit{Transport}, \textit{Sports} and \textit{Technology}. 
+These queries capture a wide diversity of measures and units as well as variety in query formulations
+(e.g., phrases for the comparison operators); see Table~\ref{table:query_stat}. 
+%Conditional phrases are also varies widely, e.g., less than, above, over, etc. 
+Anecdotal examples of user queries and their answers produced by Qsearch are shown in Table~\ref{table:example_qa}.
+We also considered queries from the QALD-6-task-3 statistical QA benchmark \cite{DBLP:conf/esws/UngerNC16},
+but out of total 150 training and test queries, we found only 6 with quantity conditions (as opposed to simpler property lookups).
+
+In this evaluation, we use the Qfact extraction model trained under the \textit{General} setting, as it generalizes to different measures and units.
+%Here, we discuss the performance of our system which is built upon the facts extracted from the proposed quantity fact %extraction model trained under the \textit{``General''} setting. 
+\input{tables/query_stat.tex} 
+\input{tables/example_qa.tex}
+
+\subsubsection{Setup.} 
+For each Qquery, we consider top-10 results returned by Qsearch and evaluate 
+their relevance and validity by judgements from crowd-workers (using Figure-Eight platform, formerly known as CrowdFlower).
+The judges were shown the query, the top-10 entity answers, 
+and the corresponding 10 sentences from which the answers were extracted. 
+Each result was annotated  as \textit{relevant} or \textit{irrelevant} to the query based on the cue given in its corresponding sentence.
+For each query, we collected three judgements and 
+used the majority label as gold standard. Overall, we obtained a high inter-annotator agreement with Fleiss' Kappa value of 0.54.
+
+\subsubsection{Baselines.} 
+Although our Qsearch system produces entities as main result, we still want to compare it with standard search systems, which produce snippets. 
+As there is no other system that can handle quantity queries with crisp entity answers, we use
+search systems as baselines that produce text snippets as answers.
+Specifically, we ran all benchmark queries on Elasticsearch, locally indexing all sentences of our news corpus,
+and on Google web search retrieving the top-10 result snippets.
+Elasticsearch uses a text-oriented state-of-the-art ranking model based on BM25.
+%
+
+The baselines were given certain advantages, to avoid that Qsearch could be viewed as an unfair competitor.
+For Elasticsearch, we consider only sentences that contain an entity and a quantity. For the evaluation, we asked crowd-workers to annotate top-10 results, retrieved from Elasticsearch, as relevant or irrelevant based on whether they spotted a reasonable result for the quantity query.
+To evaluate result snippets from Google search, we instructed annotators to be generous, as the result snippets are not well-formed sentences (but could be synthesized from
+non-contiguous text segments with ellipses). For example, a text snippet that contains a correct entity and its quantity is considered relevant even if it also contains other entities or quantities. Such instructions to annotators give Google results an advantage because Qsearch results are considered relevant only if both entity and quantity are correctly extracted.
+%For both Elasticsearch and Google, we evaluated the top-10 results, sentences or answer snippets, respectively.
+%Crowd-workers were asked to annotate these as relevant or irrelevant based on whether they spotted
+%a good result for the quantity query. 
+%For Google Search, we  collect top-3 result snippets for each query. These snippets are manually annotated as %relevant if they mention a entity and the correct information satisfying the query. 
+%For Google, as the result snippets are not well-formed sentences (but could be synthesized fromnon-contiguous text segments with ellipses), the annotators were instructed to be generous.
+
+We also explored several state-of-the-art QA systems over linked open data:
+Frankenstein
+%\footnote{\url{http://frankenstein.qanary-qa.com/}}
+\cite{DBLP:conf/www/SinghRBSLUVKP0V18},
+QAnswer
+%\footnote{\url{http://qanswer.eu/qa}}
+\cite{DBLP:conf/www/DiefenbachMQLSM19},
+Platypus
+%\footnote{\url{http://askplatyp.us/}}
+\cite{DBLP:conf/esws/TanonACS18},
+AskNow
+%\footnote{\url{https://asknowdemo.sda.tech/}}
+\cite{DBLP:conf/esws/DubeyDSHL16}, 
+Quint
+%\footnote{\url{https://gate.d5.mpi-inf.mpg.de/quint/quint}}
+\cite{DBLP:conf/emnlp/AbujabalRYW17},
+SPARKLIS
+%\footnote{\url{http://www.irisa.fr/LIS/ferre/sparklis/}}
+\cite{DBLP:journals/semweb/Ferre17}.
+%QAKiS\footnote{\url{http://qakis.org/qakis/index.xhtml}}~\cite{DBLP:conf/semweb/CabrioCAMLG12}.
+None of these systems is geared for handling quantity questions, except SPARKLIS, however it can only process quantities without associated unit.
+Moreover, their underlying KBs have poor coverage of quantities.
+% (c.f., Table \ref{table:kg_stats})
+%and thus fail to capture the semantic of quantitative facts. Due to these shortcomings, 
+%all of the above mentioned LOD-based QA systems were unable to process our benchmark queries, and therefore we exclude them from further evaluation. 
+They failed on almost all of our benchmark queries; so we excluded these systems from our comparative evaluation. 
+
+
+\subsubsection{Performance of Qsearch. } 
+Table \ref{table:performance_qsearch} shows the performance of Qsearch for the four domains and
+for all 100 queries together, using the two variants of our ranking models:
+KL divergence and context embedding distance ($ced$).
+For $ced$ we empirically tune the parameter $\alpha = 3$  based on results from 10
+validation queries
+disjoint from the 100 test queries. 
+We report three metrics: \textit{Precision@k}, \textit{Hit@k} and \textit{Mean-Reciprocal-Rank (MRR)}, 
+macro-averaged over queries. 
+We do not discuss metrics like Recall or MAP, as these would require exhaustively annotating a huge pool
+of candidate answers.
+
+\input{tables/performance_qsearch}
+
+\begin{figure}[t]
+	\includegraphics[width= 1\textwidth]{figures/compare.pdf}
+	\caption{Comparison of Qsearch against baselines.}
+	\label{fig:top-3_comparison}
+\end{figure}
+
+Overall, Qsearch performs amazingly well, typically with MRR around 0.7 or better.
+The best results are for the 
+Finance domain, which has the highest share in the corpus and is most represented in the
+Qfact extraction training.
+%Finance is the dominating slice of news articles and it covers two most frequent sample categories, Money and %Percentage, in our training dataset. 
+%We can also observe that \textit{Precision@k} decreases sharply as \textit{k} increases, together with a high %\textit{MRR} and \textit{Hit} values for our both ranking models, which confirms that relevant entities are ranked higher %by our system than the irrelevant ones. 
+\textit{Precision@1} is pretty good, but precision drops substantially when going deeper in the rankings. 
+The embedding-based ranking model clearly outperformed the KL-divergence method
+by a significant margin.
+ 
+Figure~\ref{fig:top-3_comparison} presents the comparison of Qsearch with the $ced$ ranking model 
+against Elasticsearch and Google, showing the metrics \textit{Prec.@3}, \textit{Prec.@5}, \textit{Hit@3} and \textit{MRR}. The results 
+clearly indicate that Qsearch outperforms both baselines by a large margin.
+
+
+
+
+
+
+
+
+
+
+
+

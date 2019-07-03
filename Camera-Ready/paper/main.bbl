@@ -1,0 +1,241 @@
+\begin{thebibliography}{10}
+	\bibitem{DBLP:conf/emnlp/AbujabalRYW17}
+	A.~Abujabal  et al.
+	\newblock {QUINT:} interpretable question answering over knowledge bases.
+	\newblock {EMNLP} 2017.	
+
+	\bibitem{DBLP:conf/www/AbujabalRYW18}
+	A.~Abujabal et al.
+	\newblock Never-ending learning for open-domain question answering over
+	knowledge bases.
+	\newblock {WWW} 2018.
+	
+	\bibitem{DBLP:conf/sigir/AlonsoS18}
+	O.~Alonso, T.~Sellam.
+	\newblock Quantitative information extraction from social data.
+	\newblock {SIGIR} 2018.
+	
+	\bibitem{DBLP:conf/sigir/BanerjeeCR09}
+	S.~Banerjee et al.
+	\newblock Learning to rank for quantity consensus queries.
+	\newblock {SIGIR} 2009.
+	
+	\bibitem{DBLP:conf/cikm/BastH15}
+	H.~Bast, E.~Haussmann.
+	\newblock More accurate question answering on freebase.
+	\newblock {CIKM} 2015.
+	
+	\bibitem{DBLP:conf/acl/ChenFWB17}
+	D.~Chen et al.
+	\newblock Reading wikipedia to answer open-domain questions.
+	\newblock {ACL} 2017.
+	
+	\bibitem{DBLP:conf/acl/GardnerC18}
+	C.Clark, M.Gardner.
+	\newblock Simple and effective multi-paragraph reading comprehension.
+	\newblock {ACL} 2018.
+	
+	\bibitem{DBLP:journals/kais/DiefenbachLSM18}
+	D.~Diefenbach et al.
+	\newblock Core techniques of question answering systems over knowledge bases: a
+	survey.
+	\newblock {\em Knowl. Inf. Syst.} 2018.
+	
+	\bibitem{DBLP:conf/www/DiefenbachMQLSM19}
+	D.~Diefenbach et al.
+	\newblock Qanswer: {A} question answering prototype bridging the gap between a
+	considerable part of the {LOD} cloud and end-users.
+	\newblock {WWW} 2019.
+	
+	\bibitem{DBLP:conf/esws/DubeyDSHL16}
+	M.~Dubey et al.
+	\newblock Asknow: {A} framework for natural language query formalization in
+	{SPARQL}.
+	\newblock {ESWC} 2016.
+	
+	\bibitem{DBLP:journals/semweb/Ferre17}
+	S.~Ferr{\'{e}}.
+	\newblock Sparklis: An expressive query builder for {SPARQL} endpoints with
+	guidance in natural language.
+	\newblock {\em Semantic Web} 2017.
+	
+	\bibitem{DBLP:conf/emnlp/FitzGeraldTG015}
+	N.~FitzGerald et al.
+	\newblock Semantic role labeling with neural network factors.
+	\newblock {EMNLP} 2015.
+	
+	\bibitem{DBLP:journals/coling/GildeaJ02}
+	D.~Gildea, D.~Jurafsky.
+	\newblock Automatic labeling of semantic roles.
+	\newblock {\em Comp. Linguistics} 2002.
+	
+	\bibitem{DBLP:conf/acl/HeLLZ17a}
+	L.~He et al.
+	\newblock Deep semantic role labeling: What works and what's next.
+	\newblock {ACL} 2017.
+	
+	\bibitem{DBLP:conf/sigir/HoffartMW14}
+	J.~Hoffart et al.
+	\newblock {STICS:} searching with strings, things, and cats.
+	\newblock {SIGIR} 2014.
+	
+	\bibitem{DBLP:conf/emnlp/HoffartYBFPSTTW11}
+	J.~Hoffart et al.
+	\newblock Robust disambiguation of named entities in text.
+	\newblock {EMNLP} 2011.
+	
+	\bibitem{DBLP:conf/cikm/IbrahimRW16}
+	Y.~Ibrahim et al.
+	\newblock Making sense of entities and quantities in web tables.
+	\newblock {CIKM} 2016.
+	
+	\bibitem{DBLP:conf/emnlp/JoshiSC14}
+	M.~Joshi et al.
+	\newblock Knowledge graph and corpus driven segmentation and answer inference
+	for telegraphic entity-seeking queries.
+	\newblock {EMNLP} 2014.
+	
+	\bibitem{Lamm2018QSRLA}
+	M.~Lamm et al.
+	\newblock Qsrl : A semantic role-labeling schema for quantitative facts.
+	\newblock {arXiv} 2018.
+	
+	\bibitem{rdf}
+	O.~Lassila, R.~R. Swick.
+	\newblock Resource description framework ({RDF}) model and syntax
+	specification.
+	\newblock 1999.
+	
+	\bibitem{DBLP:conf/aaai/MadaanMMRS16}
+	A.~Madaan et al. 
+	\newblock Numerical relation extraction with minimal supervision.
+	\newblock {AAAI} 2016.
+	
+	\bibitem{DBLP:conf/ijcai/Mausam16}
+	Mausam.
+	\newblock Open information extraction systems and downstream applications.
+	\newblock {IJCAI} 2016.
+	
+	\bibitem{Miller:1995:WLD:219717.219748}
+	G.~A. Miller.
+	\newblock Wordnet: A lexical database for english.
+	\newblock {\em CACM} 1995.
+	
+	\bibitem{DBLP:conf/emnlp/PenningtonSM14}
+	J.~Pennington et al.
+	\newblock Glove: Global vectors for word representation.
+	\newblock {EMNLP} 2014.
+	
+	\bibitem{DBLP:journals/pvldb/PimplikarS12}
+	R.~Pimplikar, S.~Sarawagi.
+	\newblock Answering table queries on the web using column keywords.
+	\newblock {\em {PVLDB}} 2012.
+	
+	\bibitem{DBLP:conf/acl-vlc/RamshawM95}
+	L.~Ramshaw, M.~Marcus.
+	\newblock Text chunking using transformation-based learning.
+	\newblock VLC@ACL 1995.
+	
+	\bibitem{DBLP:journals/jd/Robertson04}
+	S.~Robertson.
+	\newblock Understanding inverse document frequency: on theoretical arguments
+	for {IDF}.
+	\newblock {\em Journal of Documentation} 2004.
+	
+	\bibitem{DBLP:journals/tacl/RoyVR15}
+	S.~Roy et al. 
+	\newblock Reasoning about quantities in natural language.
+	\newblock {\em {TACL}} 2015.
+	
+	\bibitem{DBLP:conf/acl/SahaPM17}
+	S.~Saha et al. 
+	\newblock Bootstrapping for numerical open {IE}.
+	\newblock {ACL} 2017.
+	
+	\bibitem{nyt}
+	E.~Sandhaus.
+	\newblock The new york times annotated corpus, 2008.
+	
+	\bibitem{DBLP:conf/kdd/SarawagiC14}
+	S.~Sarawagi, S.~Chakrabarti,
+	\newblock Open-domain quantity queries on web tables: annotation, response, and
+	consensus models.
+	\newblock {KDD} 2014.
+	
+	\bibitem{DBLP:conf/www/SinghRBSLUVKP0V18}
+	K.~Singh et al.
+	\newblock Why reinvent the wheel: Let's build question answering systems
+	together.
+	\newblock {WWW} 2018.
+	
+	\bibitem{DBLP:series/synthesis/2016Strotgen}
+	J.~Str{\"{o}}tgen, M.~Gertz.
+	\newblock {\em Domain-Sensitive Temporal Tagging}.
+	\newblock Morgan \&
+	Claypool 2016.
+	
+	\bibitem{DBLP:conf/www/SuchanekKW07}
+	F.~M. Suchanek et al. 
+	\newblock Yago: a core of semantic knowledge.
+	\newblock {WWW} 2007.
+
+	\bibitem{DBLP:conf/esws/TanonACS18}
+	T.~P. Tanon et al.
+	\newblock Demoing platypus - {A} multilingual question answering platform for
+	wikidata.
+	\newblock {ESWC} 2018.
+
+	\bibitem{DBLP:conf/rweb/UngerFC14}
+	C.~Unger et al. 
+	\newblock An introduction to question answering over linked data.
+	\newblock Reasoning Web 2014.
+
+
+	\bibitem{DBLP:conf/esws/UngerNC16}
+	C.~Unger et al.
+	\newblock 6th Open Challenge on Question Answering over Linked Data 	(QALD-6). 
+	\newblock SemWebEval@ESWC 2016.
+	
+
+	\bibitem{DBLP:journals/semweb/UsbeckRHCHNDU19}
+	R.~Usbeck et al. 
+	\newblock Benchmarking question answering systems.
+	\newblock {\em Semantic Web} 2019.
+	
+	\bibitem{DBLP:conf/acl/XuRFHZ16}
+	K.~Xu et al. 
+	\newblock Question answering on freebase via relation extraction and textual
+	evidence.
+	\newblock {ACL} 2016.
+	
+	\bibitem{DBLP:conf/emnlp/Yang0ZBCSM18}
+	Z.~Yang et al. 
+	\newblock Hotpotqa: {A} dataset for diverse, explainable multi-hop question
+	answering.
+	\newblock {EMNLP} 2018.
+	
+	\bibitem{DBLP:conf/acl/YihCHG15}
+	W.~Yih et al. 
+	\newblock Semantic parsing via staged query graph generation: Question
+	answering with knowledge base.
+	\newblock {ACL} 2015.
+	
+	\bibitem{DBLP:journals/ftir/Zhai08}
+	C.~Zhai.
+	\newblock Statistical language models for information retrieval.
+	\newblock {\em F\&T in IR} 2008.
+	
+	\bibitem{DBLP:journals/pvldb/ZhengYZC18}
+	W.~Zheng et al. 
+	\newblock Question answering over knowledge graphs: Question understanding via
+	template decomposition.
+	\newblock {\em {PVLDB}} 2018.
+	
+	\bibitem{DBLP:conf/acl/ZhouX15}
+	J.~Zhou, W.~Xu. 
+	\newblock End-to-end learning of semantic role labeling using recurrent neural
+	networks.
+	\newblock {ACL} 2015.
+	
+\end{thebibliography}
+

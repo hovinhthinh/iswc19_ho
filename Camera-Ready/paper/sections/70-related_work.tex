@@ -1,0 +1,144 @@
+%!TEX root = ../main.tex
+
+\section{Related Work}
+\label{sec:related-work}
+
+%%%GW: keep this concise
+%%% if we discuss QA at length, it suggests that these prior works are highly relevant and we should have compared to them
+
+\subsubsection{Question Answering.} 
+%Many advanced factoid-based Question Answering (QA) systems have been developed, covering the both major paradigms in QA, IR-based QA on text corpora \cite{DBLP:conf/acl/WangN15, DBLP:conf/emnlp/YangYM15} and knowledge-based QA\cite{ DBLP:conf/coling/BaoDYZZ16, DBLP:conf/ecctd/Sanchez-Azqueta17}, or fusing them both \cite{DBLP:conf/acl/DasZRM17,DBLP:conf/emnlp/SunDZMSC18}, in order to handle complex compositional queries in natural language. Diverging from traditional open-domain QA, many recently developed QA systems\cite{DBLP:journals/corr/WestonBCM15,DBLP:conf/acl/RajpurkarJL18} address the reading comprehension task that requires understanding and reasoning of natural language.  However, none of these QA systems can efficiently handle processing and reasoning of quantitative information. A few state-of-the-art works\cite{DBLP:conf/cikm/JiaARSW18} focus explicitly the reasoning of temporal constraints in questions, and most of the previous works can support mainly the counting-based numeric queries. In this work, we aim to generalize the processing of quantitative information over varied numerical constraints exploiting deep semantic role labeling. Limited number of numeric relations in the Knowledge is an important bottle neck for processing quantities, and recently has been addressed in\cite{DBLP:conf/aaai/MadaanMMRS16}. Unlike our quantity-specific context extraction model, the authors presented NumberTron which aims to extract triplets for specific numeric relations from textual corpora. Tapping into semi-structured resources from Web, QEWT\cite{DBLP:conf/kdd/SarawagiC14} harnesses ambiguous and imprecise numbers in web tables and improve the performance of quantity-seeking queries.   
+%KP: discussion about WikiTableQuestions ?
+QA over knowledge graphs and other linked data sources has received great attention over the
+last years; see \cite{DBLP:conf/rweb/UngerFC14,DBLP:journals/kais/DiefenbachLSM18} for surveys.
+State-of-the-art methods 
+(e.g., \cite{DBLP:conf/acl/YihCHG15,DBLP:conf/cikm/BastH15,DBLP:conf/acl/XuRFHZ16,DBLP:conf/www/AbujabalRYW18,DBLP:journals/pvldb/ZhengYZC18}) 
+translate questions into
+SPARQL queries, bridging the gap between
+question vocabulary and the terminology
+of the underlying data by means of
+templates and/or learning from
+training collections of question-answer pairs.
+Benchmarks like the long-standing 
+QALD series and other competitions
+have shown great advances along these lines
+\cite{DBLP:journals/semweb/UsbeckRHCHNDU19}.
+However, these benchmark tasks hardly
+contain any quantity queries of the kind
+addressed here (even in QALD-6-task-3, only 6 out of 150 questions are of this kind, others are mostly about quantity lookup). Note that look-ups of 
+quantity attributes of qualifying entities
+(e.g., Jeff Bezos's net worth, 10 richest people, or fastest sprinter over 100m)
+are of a different nature, as they do not
+contain quantity comparisons between query
+and data (e.g., worth more than 50 million USD,
+running faster than 9.9 seconds).
+Moreover, the scope and diversity of the benchmark queries is necessarily restricted to relatively
+few numeric properties, as knowledge graphs
+hardly capture quantities in their full extent (with value and unit properly
+separated and normalized). This is our motivation to tap
+into text sources with more extensive coverage.
+
+QA over text has considered a wide range
+of question types (e.g., \cite{DBLP:conf/emnlp/Yang0ZBCSM18,DBLP:conf/acl/GardnerC18,DBLP:conf/acl/ChenFWB17}), but there
+is again hardly any awareness of quantity queries.
+Keyword search, including
+telegraphic queries, with quantity conditions
+have been considered by 
+\cite{DBLP:conf/emnlp/JoshiSC14}, and have been applied
+to web tables \cite{DBLP:journals/pvldb/PimplikarS12,DBLP:conf/kdd/SarawagiC14}. 
+%The approaches pursued in that context
+%cannot be carried over to our setting
+%where the data input is arbitrary natural language text.
+
+\cite{DBLP:conf/sigir/BanerjeeCR09} and
+its follow-up work \cite{DBLP:conf/kdd/SarawagiC14}
+focused on
+a specific kind of quantity query, namely,
+retrieving and aggregating numerical values
+associated with an attribute of a given entity
+(e.g., Bezos's net worth or GDP of India). To this end, 
+learning-to-rank techniques over value distributions
+were developed to
+counter the uncertainty in the retrieved values,
+where web pages often contain crude estimates
+and lack exact values.
+In contrast to our setting, that work did not
+consider quantities in search conditions. 
+%and did not
+%require inferring units and entities to which
+%quantities refer.
+
+
+
+\subsubsection{Information Extraction.}
+Recognizing and extracting numeric expressions
+from text has been addressed using
+techniques like CRFs and LSTMs 
+(e.g., \cite{DBLP:conf/aaai/MadaanMMRS16,DBLP:conf/acl/SahaPM17,DBLP:conf/sigir/AlonsoS18}).
+However, this alone does not turn numbers
+into interpretable quantities, with units
+and proper reference to the entity with
+that quantity. Only few works attempted
+to canonicalize quantities by mappings
+to hand-crafted knowledge bases 
+of measures \cite{DBLP:conf/cikm/IbrahimRW16}, but these efforts are
+very limited in scope.
+The special case of temporal expressions
+has received substantial attention
+(e.g., \cite{DBLP:series/synthesis/2016Strotgen}), but this solely covers dates
+as measures.
+
+Most related to our approach are the works
+of \cite{DBLP:conf/kdd/SarawagiC14} and \cite{DBLP:journals/tacl/RoyVR15}.
+The former used probabilistic context-free grammars
+to infer units of quantities, but focused specifically
+on web tables as inputs.
+The latter extended semantic role labeling (see below)
+to extract quantities and their units from
+natural language sentences.
+Neither of these can be readily applied
+to extracting quantities and their reference entities
+from arbitrary textual inputs.
+\subsubsection{Semantic Role Labeling.} Semantic role labeling (SRL) has been intensively researched
+as a building block for many 
+NLP tasks \cite{DBLP:journals/coling/GildeaJ02}.
+%Question Answering frameworks \cite{DBLP:conf/emnlp/ShenL07, DBLP:journals/coling/SurdeanuCZ11}, as well as, in other NLP tasks, such as Information Extraction \cite{DBLP:conf/kcap/ChristensenMSE11, DBLP:conf/naacl/StanovskyMZD18}, Machine translations \cite{DBLP:conf/coling/LiuG10}, in order to exploit the semantic representation of the predicate-argument structure of a sentence in a language. 
+Given a verb phrase of a sentence
+viewed as a central predicate, 
+%the SRL task is to assign different pre-defined roles of the verb in the sentence. 
+SRL identifies phrases that are assigned to
+pre-defined roles to form a frame-like
+predicate-arguments structure.
+%Generally, SRL \cite{DBLP:journals/coling/GildeaJ02, DBLP:conf/conll/KoomenPRY05} is considered as a classification task based on syntactic features of sentences and often uses labeled corpus, such as PropBank \cite{DBLP:journals/coling/PalmerKG05}, FrameNet \cite{DBLP:journals/lre/Baker12}. 
+%
+%Instead of relying on fine-tuned syntactic features of sentences, many recent literature consider word embeddings as one of the key features to learn SRL model using different  neural network methods \cite{DBLP:conf/acl/ZhouX15, DBLP:conf/acl/HeLLZ17a, DBLP:conf/emnlp/FitzGeraldTG015}. 
+Modern SRL methods make use of pre-computed
+word embeddings and employ deep neural networks
+for role filling (e.g., \cite{DBLP:conf/acl/ZhouX15, DBLP:conf/acl/HeLLZ17a, DBLP:conf/emnlp/FitzGeraldTG015}).
+%
+%Task1 of this work addresses conceptually similar to the SRL task. However, we map a sentence to a general semantic representation based on different quantity-specific roles for a given numeric value from the sentence. Hence, the characteristics of these roles differ from the predicate-argument roles where verbs are technically considered as predicates. In order to learn our quantity-specific SRL model, we employ word-embedding based deep SRL model \cite{DBLP:conf/acl/HeLLZ17a}.
+Our approach differs from this state-of-the-art SRL,
+as we are not primarily focused on the verb-phrase
+predicate, but consider the numeric quantity in a sentence
+as the pivot and aim to capture quantity-specific roles.
+
+%%%GW: need to trim the following
+To support exploration of quantitative facts in financial reports, \cite{Lamm2018QSRLA} proposed a 
+semantic representation for quantity-specific roles.
+% and discuss possibilities to utilize the shallow semantic parsing to develop their proposed framework. 
+%In the similar direction, in order to solve the elementary school math problems, 
+\cite{DBLP:journals/tacl/RoyVR15} devised a quantity representation as an additional component of
+an SRL method, which is part of the Illinois Curator software suite.
+% to reason about numbers in natural language. 
+%
+%Our SRL model represents a simplified version of their proposed semantic roles. For example, the roles \textit{entity}, \textit{value}, \textit{unit}, and \textit{resolution} are respectively similar to the roles  \textit{THEME}, \textit{VALUE with SIGN}, \textit{UNIT}, and \textit{MANNER} in their model. However, the  \textit{context} in our model generalizes the roles  \textit{QUANTITY}, \textit{LOCATION}, and \textit{TIME} together from QSRL model by Lamm et al. \cite{Lamm2018QSRLA}. Such generalization of semantic role makes our model simpler and helps in leveraging the problem of numerical Question Answering, addressed in this work. 
+Our approach makes use of this technique,
+%which is part of the Illinois Curator software suite,
+as a preprocessing step.
+However, we go further by 
+learning how to connect quantities with their
+respective entities and to collect relevant 
+context cues that enable our matching and
+ranking stage for query answering.
+
+

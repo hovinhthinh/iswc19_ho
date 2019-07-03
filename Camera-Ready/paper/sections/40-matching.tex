@@ -1,0 +1,89 @@
+%!TEX root = ../main.tex
+\section{Candidate Fact Matching Model} 
+\label{sec:match}
+This section describes our method to answer Qqueries from the extracted Qfacts. To this end, each Qfact is assigned a score denoting its relevance to the given Qquery.
+
+\subsubsection{Query Parsing.} 
+%We implemented a simple parser to transform the user queries into the Qquery format. 
+Input questions are mapped into Qqueries by a rule-based parser for recognizing answer type and quantity condition; all other tokens (except stopwords) are included in the query context. The parser uses a dictionary of YAGO types and a dictionary of quantity units. An alternative to this rule-based technique would be to apply the same neural extraction method to questions that we have used to extract Qfacts from text. However, the questions are easier to handle, and the rule-based parser works well. 
+
+\begin{task}[Quantity Fact Scoring] Given Qquery $\mathcal{Y} = (t^*,q^*,X^*)$ and Qfact $\mathcal{F} = (e,q,X)$, compute a distance score $d(\mathcal{F}, \mathcal{Y})$ reflecting the relevance of $\mathcal{F}$ regarding $\mathcal{Y}$.
+\end{task}
+Without loss of generality, we assume that a lower score denotes a better fact.
+%As mentioned in Section \ref{sec:framework}, 
+$\mathcal{F}$ should be a high-ranked answer for $\mathcal{Y}$ iff the following three conditions hold:
+(1) $e$ is an entity of type $t^*$, 
+(2) $q$ satisfies $q^*$, and (3) $X$ is a good (approximate) match for $X^*$.
+
+%\begin{task} [Quantity Fact Retrieval] Given a quantity query $\mathcal{Q}$ and a set of candidate quantity facts $\mathbb{F} = \{\mathcal{F}_1,\mathcal{F}_2,... \}$, return a ranked list of facts $\mathbb{F}_i \subset \mathbb{F}$
+%\end{task}
+\subsubsection{Entity - Type Matching.} We only consider the Qfact $\mathcal{F}$ if the entity $e$ has type $t^*$. Since the entities from text are linked to an external knowledge base, we make use of the type information from the KB to filter out unsuitable facts for $\mathcal{Y}$. %This is done in Block 6 of the Qsearch overview (Figure \ref{fig:system}).
+
+\subsubsection{Quantity Matching.} We also discard $\mathcal{F}$ if $q$ does not satisfy $q^*$. This is the case when either (1) the units of $q$ and $q^*$ relate to different concepts (e.g. \textit{km} (length) vs. \euro (money)) and are thus incomparable; or (2) their values (after conversion to the same unit) do not match the comparison operator of $q^*$. Since quantity matching is not the focus of our paper, we apply a simple matching method as follows. First, we use hand-crafted rules for unit conversions, re-scaling if needed (e.g., for kilo, mega, etc.), and value normalization. Second, we turn the quantity value into an interval based on its resolution. For example, when the query is about approximate matches, a quantity value $v$ is smoothed into the interval $[v-\delta, v+\delta]$ with a configuration parameter $\delta$. In experiments, we set $\delta$ to 5\% of $v$. A comparison is considered a match when the two intervals overlap, and their units (after conversion and re-scaling) match.
+
+\subsubsection{Context Matching.} If the Qfact $\mathcal{F}$ satisfies the above two constraints, we will consider the similarity between the query context $X^*$ and the fact context $X$. We propose to use the following two approaches for measuring the context relevance: a \textit{probabilistic} and an \textit{embedding-based} approach.\\
+
+\noindent \textbf{Probabilistic Ranking Model.} We adopt the Kullback-Leibler (KL) divergence between the query context $X^*$ and the fact context $X$, which is typically used in statistical language models \cite{DBLP:journals/ftir/Zhai08}. The scoring function is defined as follows:
+\begin{align*}
+d(\mathcal{F}, \mathcal{Y}) = \textit{KL}(X^*, X) &= H(X^*, X) - H(X^*) \\ &\equiv H(X^*, X) 
+= -\sum_{w \in \mathcal{V}} P(w|X^*)\,\log P(w|X)
+\end{align*}
+where $\mathcal{V}$ is the word vocabulary, $H(X^*)$ is the entropy of $X^*$; $H(X^*, X)$ is the cross entropy between $X^*$ and $X$; and $\equiv$ indicates rank equivalence
+(i.e., preserving order). 
+Since we are only interested in ranking fact contexts in response to a query context, we can omit $H(X^*)$. The word probability $P(w|X^*)$ for the query context is estimated using Maximum Likelihood Estimation (MLE) on an expanded version $X^*_E$ of $X^*$ as:
+\[P(w|X^*) = count(w \in X^*_E)/|X^*_E|\]
+To expand a query context, we resort to WordNet \cite{Miller:1995:WLD:219717.219748} and add all synonyms of the context words to it. For the fact context, we estimate the word probability $P(w|X)$ using Jelinek-Mercer smoothing 
+%to avoid zero probabilities
+ as:
+\[P(w|X) = (1 - \lambda) \times count(w \in X)/|X| + \lambda \times P(w|B)\]
+This linearly combines the MLE from the fact context $X$ with the MLE obtained from a background corpus $B$. The smoothing parameter $\lambda$ (set to $\lambda=0.1$ in our system) controls the influence of the background corpus on the probability estimate. We construct the background corpus $B$ from all sentences of the entire text corpus that contain at least one quantity (total 39M sentences in our data). \\
+
+
+%Since these two estimates are very sparse, before calculating, we expand $X^*$ and $X$ using an external resource. Moreover, a smoothing method is applied to avoid zero counts.
+%\thinh{Should explain more? which resource, how to expand, which smoothing method.}
+
+\noindent \textbf{Embedding-based Ranking Model}: 
+We observed on our data that the query context $X^*$ is often shorter than the fact context $X$, since sentences are often more verbose than the typically short queries. Hence, to measure the distance score of $X$ with regard to $X^*$, we can match tokens between $X^*$ and $X$ using word embedding similarity as follows:
+\[d(\mathcal{F}, \mathcal{Y}) = {\bigg(\sum\limits_{u \in X^*} \min\limits_{v \in X}(dist(u,v))\bigg)}/{|X^*|}\]
+where $dist(u,v) \geq 0$ is the semantic distance between two words $u$ and $v$ estimated from their pre-computed word embedding vectors \cite{DBLP:conf/emnlp/PenningtonSM14}. 
+We use cosine distance in the Qsearch implementation, re-scaled for normalization to [0,1]. 
+In the above equation, 
+we map each word of query context $X^*$ to its closest word in the fact context $X$ in the embedding space. This scoring formula gives the same weight to every token in the query context $X^*$, which might be misleading, since they could have a different degree of importance.
+%Therefore, to increase the impact of more important words and to reduce the role of less %important ones in $X^*$, 
+This issue is overcome by giving higher weight to important words and lower weight
+to uninformative words, using
+%we use 
+the following distance function:
+\[d(\mathcal{F}, \mathcal{Y}) = \frac{\sum\limits_{u \in X^*} W(u)\min\limits_{v \in X}(dist(u,v))}{\sum\limits_{u \in X^*}W(u)} + 1\]
+where $W(u) \geq 0$ is the importance weight of word $u$. 
+There are several weighting functions that can be used for $W$ (e.g., \textit{inverse document frequency (idf)}, \textit{term strength}, etc.); we use Robertson’s \textit{idf}\cite{DBLP:journals/jd/Robertson04}. 
+We call the above formula the 
+\textit{directed embedding distance}, $ded(X^* \rightarrow X)$,
+between query and fact contexts.
+
+$ded(X^* \rightarrow X)$ describes how well each word in $X^*$ matches with some other word in $X$, but in many cases it fails to reflect the match between their meaning. The presence of a single word in the fact context $X$ can totally change its meaning. Consider, as a concrete example, the two contexts $X^*=\{\textit{net, worth}\}$ vs. $X = \{\textit{negative, net, worth}\}$. Hence, our idea is to penalize the relevance score with an amount proportional to the directed embedding distance between $X$ and $X^*$.
+Specifically, we define the \textit{context embedding distance ($ced$)} that implements this idea:
+\begin{align*}
+&d(\mathcal{F}, \mathcal{Y}) = ced(X^*, X) = ded(X^* \rightarrow X) \times ded(X \rightarrow X^*)^\alpha \\
+=& \Bigg( \frac{\sum\limits_{u \in X^*} W(u)\min\limits_{v \in X}(dist(u,v))}{\sum\limits_{u \in X^*}W(u)} + 1 \Bigg) \times \Bigg( \frac{\sum\limits_{u \in X} W(u)\min\limits_{v \in X^*}(dist(u,v))}{\sum\limits_{u \in X}W(u)} +1 \Bigg)^\alpha 
+\end{align*}
+Intuitively, our $ced$ measure is the product of two components: (1) $ded(X^* \rightarrow X)$ captures how well query context tokens match with fact context, and (2) $ded(X \rightarrow X^*)$ reflects how much additional terms in $X$ shift its meaning, and hence, should be penalized. Parameter $\alpha \in [0,+\infty)$ controls how much the penalty scaling affects the total score.
+
+\begin{example} Consider the Qquery context $X^* = \{\textit{gross, domestic, product}\}$ and two Qfact contexts $X_1 =$ \{\textit{gross, national, product}\}, $X_2 =$  \{\textit{gross, domestic, product, capita}\}. While we are more inclined to $X_1$ than $X_2$, the directed embedding distance $ded(X^* \rightarrow X_2)$ has a slightly better score than $ded(X^* \rightarrow X_1)$, as it does not penalize the word \textit{``capita''}
+(which indicates that the GDP is per capita, not the total GDP). 
+In contrast, $ded(X_1 \rightarrow X^*)$ is lower than $ded(X_2 \rightarrow X^*)$ (since \textit{``national''} is close to \textit{``domestic''}), preferring $X_1$ over $X_2$ with regard to $X^*$, which results in the desired ranking based on the context embedding distance $ced$. \qed
+\end{example}
+
+\subsubsection{Entity Scoring.} The output of Qsearch is a ranked list of entities from matching Qfacts with the Qquery. 
+%In Block 7 of the system overview (Figure \ref{fig:system}), we give 
+We assign a score for each candidate entity 
+%$c \in \mathcal{C}$ based on its quantity-context pairs $L_{c} = \{(q_{c1},X_{c1}),%(q_{c2},X_{c2}),... \}$. Note that after filtering based on the quantity condition, we only need %to consider context matching.
+based on one of the above context distance models and
+aggregating over the entity's quantity-context pairs as follows:
+\[\textit{score}(c \in \mathcal{C}, \mathcal{Y}) = \min\limits_{(q, X) \in L_c} d(\mathcal{F}=(c,q,X), \mathcal{Y})\]
+where $d(\mathcal{F}, \mathcal{Y})$ is either the Kullback-Leibler divergence $\textit{KL}(X^*, X)$ or the context embedding distance
+$ced(X^*,X)$.
+So when the same candidate entity appears in multiple Qfacts, we pick the best-scoring
+Qfact context distance.
+%Put differently, we rank candidate entities based on their best fact context, i.e., the one %achieving the lowest distance to the query context.
+

@@ -1,0 +1,174 @@
+%!TEX root = main.tex
+
+%% Space saver for LNCS, works with (at least):
+%% \ProvidesClass{llncs}[2010/07/12 v2.17]
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% PARAGRAPHS
+
+\renewcommand{\baselinestretch}{1}
+
+%% The frenchspacing declaration tells LaTeX not to insert extra space
+%% at the end of sentences. LNCS already uses frenchspacing.
+%% \frenchspacing
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% FONTS
+
+\usepackage{times}
+\renewcommand*\ttdefault{cmtt}% smaller tt font
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% HEADINGS
+
+\def\mySectionBeforeSkip{12}    %% LNCS default: 18
+\def\mySubSectionBeforeSkip{12} %% LNCS default: 18
+\def\myParagraphBeforeSkip{8}   %% LNCS default: 12
+
+\def\mySectionAfterSkip{8}      %% LNCS default: 12
+\def\mySubSectionAfterSkip{5}   %% LNCS default: 8
+%% Note there is no afterskip for subsub or paragraph, as they are
+%% inline headings.
+
+\def\myHeadingRubber{2}  %% LNCS default: 4
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% FIGURES, and MATH spacing
+
+%% space between last top float or first bottom float and the text:
+\setlength{\textfloatsep}{4mm plus 2.0pt minus 4.0pt}  %% LNCS default: 8mm plus 2.0pt minus 4.0pt:
+
+%% space left between floats.
+\setlength{\floatsep}{6pt plus 2.0pt minus 2.0pt} %% LNCS default: 12.0pt plus 2.0pt minus 2.0pt
+
+%% space left on top and bottom of an in-text float:
+\setlength{\intextsep}{4mm plus 2.0pt minus 4.0pt}     %%  LNCS default: 8mm plus 2.0pt minus 4.0pt:
+
+%% space above and below caption:
+\setlength{\abovecaptionskip}{7pt}     %% LNCS default: 10pt
+\setlength{\belowcaptionskip}{-2pt}   %% LNCS default: 0pt
+
+
+%% space above and below math
+\setlength{\abovedisplayskip}{5pt plus 2.0pt minus 5.0pt}  %% LNCS default: 10.0pt plus 2.0pt minus 5.0pt
+\setlength{\belowdisplayskip}{5pt plus 2.0pt minus 5.0pt}  %% LNCS default: 10.0pt plus 2.0pt minus 5.0pt
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%% BIBLIOGRAPHY
+%%%%  select either biber or bibtex
+
+
+% \usepackage[
+%   backend=bibtex,
+%   citestyle=numeric-comp,
+%   hyperref,
+%   maxnames=10,
+%  minnames=8,
+%   sorting=nty,
+%   firstinits=true,
+%   doi=false,
+%   url=false,
+%   isbn=false,
+%   %editor=false,
+%   ]{biblatex}
+% \usepackage{csquotes}
+% \bibliography{bib/ognjen-bib}
+% \def\UrlFont{\small\tt}
+% %\setlength\bibitemsep{.2pt}
+% \AtEveryBibitem{\clearfield{series}}
+% \AtEveryBibitem{\clearfield{pages}}
+% \AtEveryBibitem{\clearfield{editor}}
+% \DeclareFieldFormat[article,inbook,incollection,inproceedings,patent,thesis,unpublished]{citetitle}{#1\isdot}
+% \DeclareFieldFormat[article,inbook,incollection,inproceedings,patent,thesis,unpublished]{title}{#1\isdot}
+
+
+%% Don't change below this thick line, please.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Microtype makes the text more beautiful, i.e, less underfull and
+% overfull boxes, and almost always saves space.
+\usepackage[
+  final,                            % final - enable microtype; use "draft" to disable
+  activate={true,nocompatibility},  % activate={true,nocompatibility} - activate protrusion and expansion
+  %tracking=true,                    % tracking=true, kerning=true, spacing=true - activate these techniques
+  kerning=true,
+  spacing=true,
+  factor=1100,                      % factor=1100 - add 10% to the protrusion amount (default is 1000)
+  stretch=30,shrink=30              % stretch=10, shrink=10 - reduce stretchability/shrinkability (default is 20/20)
+  ]{microtype}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Figure floating.
+% Alter some LaTeX defaults for better treatment of the floating of
+% figures. See p.105 of "TeX Unbound" for suggested values.  See
+% pp. 199-200 of Lamport's "LaTeX" book for details.
+% Remember to use [htp] or [htpb] for placement.
+
+% General parameters, for all pages:
+\renewcommand{\topfraction}{0.9}	% max fraction of floats at top
+\renewcommand{\bottomfraction}{0.8}	% max fraction of floats at bottom
+
+% Parameters for text pages (not float pages):
+\setcounter{topnumber}{2}
+\setcounter{bottomnumber}{2}
+\setcounter{totalnumber}{4}             % 2 may work better
+\renewcommand{\textfraction}{0.07}	% allow minimal text w. figs
+
+% Parameters for float pages (not text pages):
+\renewcommand{\floatpagefraction}{0.7}	% require fuller float pages
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% @startheading usage:
+% \@startsection
+%    {<name>}
+%    {<level>}
+%    {<indent>}
+%    {<beforeskip>}
+%    {<afterskip>}
+%    {<style>}
+%    [<altheading>]
+%    {<heading>}
+
+\renewcommand\section{\@startsection{section}{1}{\z@}%
+		       {-\mySectionBeforeSkip\p@ \@plus -\myHeadingRubber\p@ \@minus -\myHeadingRubber\p@}%
+		       {\mySectionAfterSkip\p@ \@plus \myHeadingRubber\p@ \@minus \myHeadingRubber\p@}%
+		       {\normalfont\large\bfseries\boldmath
+			\rightskip=\z@ \@plus 8em\pretolerance=10000 }}
+\renewcommand\subsection{\@startsection{subsection}{2}{\z@}%
+		       {-\mySubSectionBeforeSkip\p@ \@plus -\myHeadingRubber\p@ \@minus -\myHeadingRubber\p@}%
+		       {\mySubSectionAfterSkip\p@ \@plus \myHeadingRubber\p@ \@minus \myHeadingRubber\p@}%
+		       {\normalfont\normalsize\bfseries\boldmath
+			\rightskip=\z@ \@plus 8em\pretolerance=10000 }}
+\renewcommand\subsubsection{\@startsection{subsubsection}{3}{\z@}%
+		       {-\mySubSectionBeforeSkip\p@ \@plus -\myHeadingRubber\p@ \@minus -\myHeadingRubber\p@}%
+		       {-0.5em \@plus -0.22em \@minus -0.1em}%
+		       {\normalfont\normalsize\bfseries\boldmath}}
+\renewcommand\paragraph{\@startsection{paragraph}{4}{\z@}%
+		       {-\myParagraphBeforeSkip\p@ \@plus -\myHeadingRubber\p@ \@minus -\myHeadingRubber\p@}%
+		       {-0.5em \@plus -0.22em \@minus -0.1em}%
+		       {\normalfont\normalsize\itshape}}
+
+
+
+% Leftovers
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% titlesec
+% %% 1. Save the class definition of \subparagraph, and
+% %% 2. provide a definition to \subparagraph to keep titlesec happy,
+% %% 3. load titlesec,
+% %% 4. Revert \subparagraph to the llncs definition.
+% \let\llncssubparagraph\subparagraph
+% \let\subparagraph\paragraph
+% \usepackage{titlesec}
+% \let\subparagraph\llncssubparagraph

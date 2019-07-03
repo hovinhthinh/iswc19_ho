@@ -1,0 +1,160 @@
+%!TEX root = ../main.tex
+
+\section{Introduction}\label{sec:intro}
+
+\subsubsection{Motivation.}
+
+
+Quantities, such as \$2B, 40 mpg or 19.19 s,
+are more than mere numbers; they express measures 
+like revenue, fuel consumption or time in a race
+with a numeric value and a corresponding unit. 
+The occurrence of a quantity in the text or a table of a web page is associated 
+with an entity and interpretable only with the surrounding context. 
+%The interpretation of these quantities is only possible through the associated entities and in context. 
+For example, in the sentence \textit{``BMW i8 costs about 138k Euros
+in Germany and has a battery range between 50 and 60 km.''},
+the quantity \euro 138.000 (after normalization) refers to the price
+of the car model BMW i8, and the quantity interval [50,60]km
+denotes the range for that car (note that this is in electric mode only as this is a hybrid car).
+
+Quantities are common in search queries, for example to find a product within a specific price range,  cars or mobile phones with
+desired technical or environmental properties,
+or athletes who ran a race in a certain time. 
+ When a user issues a quantity search query, such as \textit{``Hybrid cars with price under 35,000 Euros and battery range above 100 km''}, 
+ she expects the search engine to understand the quantities and to return relevant answers as a list of entities.
+%The relevant answer here is a list of cars that are ``less than 35,000 Euros'' and ``battery range more than 100km''. 
+However, Internet search engines treat quantities largely as strings ignoring their values and unit of measurements. As a result, they
+cannot handle numeric comparisons, they miss out on units
+or scale factors (such as ``k'' in ``138k''), do not know about
+necessary conversions between units,  and ultimately
+fail. The exceptional cases where search engines 
+(incl. vertical product search) provide 
+support for coping with quantities are money and date,
+but this is achieved by specialized techniques and 
+fairly limited. 
+
+\input{tables/kg_stats}
+
+One would hope that semantic search over knowledge
+graphs (KG) like DBpedia
+%, Yago
+ or Wikidata goes further,
+%but they provide a very low coverage of quantitative facts; 
+but their coverage of quantitative facts is very limited
+and most literals, apart from dates, are merely represented as strings; e.g., battery capacity of the BMW i3 is shown as the string
+\textit{``i3 94 A·h: 33 kWh lithium-ion battery''} in DBpedia.
+%display size for mobile phones are represented by number without any associated unit in DBpedia. 
+%%The length of the Mercedes-Benz O405 is shown as \textit{``11.1 m''} 
+%The weight of the racing car Williams FW07 is shown as \textit{``: 585 kg''} 
+%%in DBpedia 
+%-- again just a string that is useless for queries with comparisons 
+%like vehicles with \textit{``length more than 10 meters''} or \textit{``length above 30 feets''}.
+%like cars with \textit{``weight more than 500 kilograms''} or \textit{``weight above 1000 pounds''}.
+Important properties for cars, like fuel consumption, CO2 emission, etc. are not covered at all.
+%in either DBpedia or Wikidata.
+%though these informations are mentioned in additional comments in form of text. 
+ Table \ref{table:kg_stats} gives exemplary numbers for the quantity coverage in Wikidata and DBpedia.
+%show such low coverage of quantitative facts available in these KGs.
+%For some cars like Tesla Model X, the range is shown in the form ``257$\pm$1 mile'' in Wikidata-- again just a string, while API returns simply a point value, 257 mile, rather providing the range that is useless for queries with comparisons 
+%the length of the BMW i8 is shown as ``4,689 millimeter'' in Wikidata;
+%like ``range above 250 miles''
+%or ``range above 400 km''.
+% For example, the range of the Tesla Model X is shown as ``257$\pm$1 mile'' in Wikidata -- just a string that is useless for queries with comparisons like ``range above 250 miles'' or ``range above 400 km''; fuel consumption, CO2 emission, etc. are not covered at all.
+
+%Moreover, question answering systems over linked data (incl. KGs)
+%have rarely considered quantities in search condition, e.g., a popular benchmark for quantity queries, QALD-6-task-3~\cite{DBLP:journals/semweb/UsbeckRHCHNDU19}, contains only 6 queries with quantity conditions out of 150.
+
+%While range, display size and personal best time are important properties for entity types car, mobile and marathon runner, respectively; these data are not available at all, or the data type is not always included. The exception is stadium capacity, but the number in this case is dimensionless, which is easier to handle.
+
+%Several form-based search engines were created to counter this issue, such as specialized products search engines. However, these form-based search engines are tedious to use and only covers a specific class of items, normally stored in a single relational database. 
+
+%It is complex to find the central entitiy, and 
+%uantities appear in search queries in numerous forms: to find a product within a specific price range, to locate a country with an increasing GDP, to explore movies produced in a specific year, to identify athletes who won multiple Olympic medals, among others. They represent an indispensable part of the query that defines the set of the possible answers. Therefore, they necessitate special handling to understand them within their context.
+
+%the current gap in the search engines
+ %Natural language queries involving quantities are common. However, modern search engines fail to answer them. Most of the search engines are keyword-based or entity-based.
+
+ %As a result, they treat quantities as a string ignoring their values and unit of measurements.  Moreover, search engines usually retrieve a ranked list of webpages, except for some cases at which search queries involves prominent entities or events.   
+
+%%%GW: now make a crisp statement of what this paper is about
+This paper sets out to provide support for answering quantity queries from text, over a wide variety of expressive measures, to overcome
+this severe limitation of today's search engines and knowledge graphs.
+%GW: added a sentence towards "semantic web"
+Our method extracts quantity-centric structure from Web contents, uncovering the hidden semantics
+of linking quantities with entities. 
+
+%% what we aim at
+%To bridge this gap, we aim at answering quantity queries and providing the user with a seamless search experience.
+%We define a quantity query as a query for a specific type of entities, such as cars, that is conditioned on a quantity, such as ``price less than 35,000 Euros''.
+
+%We provide the user with a ranked list of entities, instead of a ranked list of web pages. We pay special attention to quantities in the query and their context while retrieving the answer. Thus, we provide the basis for the next generation search engine capable of answering complex quantity queries. 
+
+
+ 
+\subsubsection{Problem Statement.}
+We define our problem as follows. Given a quantity query and a corpus of text pages, 
+find a ranked list of entities that match the given query.
+A quantity query is a triple $(t^*,q^*, X^*)$, where 
+$t^*$ is the semantic type of the expected answers, 
+$q^*$ is a quantity-centric search condition, and 
+$X^*$ is the context that connects the entity type  $t^*$ with quantity condition $q^*$. For example, for the query  \textit{``Cars with price less than \euro 35,000 in Germany''}, the triple $(t^*,q^*, X^*)$ is: $(\textit{cars; < \euro 35.000;} \{\textit{price, Germany}\})$.
+%
+Our problem has two dimensions.
+The first is to understand the content of the text snippets and extract the relevant quantity facts. The second is to match such extracted
+assertions (inevitably with noise and errors) against a query
+and compute a ranked list of relevant entity answers.
+
+
+\subsubsection{Approach.}
+This paper presents Qsearch, an end-to-end system for answering quantity queries. Qsearch employs a deep neural network
+to extract quantity facts from text,
+%GW: added a pitch on "semantics"
+this way lifting textual information into semantic structures.
+%and to understand the users' quantity query. 
+Then, it utilizes 
+a statistical matching model to retrieve and rank answers.
+%On the other hand, we preprocess the corpus of web documents into triples of $(E,Q,X)$, where $E$ is an entity, $Q$ is a quantity related to $E$, and $X$ is the context defining the relation between $E$ and $Q$. For example, the triple \textit{(BMW i8, \{costs, Germany\}, \euro 138.000)} corresponds to the following sentence: \textit{``The BMW i8 costs about \euro 138k in Germany.''}
+ %Then, we semantically match the query to the facts we extract from the web corpus. We generate a ranked list of objects matching the query.
+%challanges 
+%how we do it
+%We split the quantity search problem into two essential components: 
+%(i)\emph{Quantity-fact extraction from text} (ii)\emph{Query matching}
+
+We model the first component, quantity fact extraction, as a Semantic Role Labeling (SRL) task \cite{DBLP:journals/coling/GildeaJ02} and devise a 
+%{Deep Semantic Role Labeling (DSRL)} 
+deep learning
+method to label words in the sentences with relevant roles. We label each word as entity, quantity or context (or other). Then we use these tags to extract quantity fact triples in form of \textit{(entity, quantity, context)}.
+%
+For the second component, query matching, we devise a 
+%deep 
+novel
+%semantic
+matching method to retrieve a ranked list of relevant entities that answer the user's quantity query.
+%more about the approach here!
+
+%We design a full-fledged system that answers complex quantity queries. preprocesses web content, index them, and answers complex quantity queries in an efficient manner.  Our system extracts quantity-related facts from web pages and stores them as a triple of  $(E, Q, X)$. It transforms the problem to a \emph{Semantic Role Labelling} task and employs a \emph{Deep Semantic Role Labeling (DSRL)} model to label sentences. % with $E$, $Q$, and $X$ tags.
+
+%\subsubsection{Limitations of Prior Work.}
+%\subsubsection{Outlook}
+% research focused on answering quantity queries 
+%recent work covering quantity extraction and fact extraction
+%QA
+
+%%%GW: this is too long for here (intro)
+%Though, some of the previous work tackled, binary and n-ary quantity fact extraction~\cite{DBLP:conf/www/ErnstSW18} and semantic annotation of quantities\cite{DBLP:conf/cikm/IbrahimRW16, Ibrahim:ICDE2019}, none of them looked into how to harness these semantic annotations to answer quantity-related queries. 
+%Zhang et al.~\cite{DBLP:conf/sigmod/ZhangC13} consider semantic matching of quantities on web tables, but did not give attention to quantities in natural text.  The work of Banerjee et al.~\cite{DBLP:conf/sigir/BanerjeeCR09} answers quantity consensus queries, however, they only consider binary relations and rely on hand-crafted rules. 
+%State of the art retrieval models do not focus on quantity queries nor do they consider extracting quantity facts from the text. On the other hand factoid question answering (QA) systems merely function as a quantity-lookup form structured semantic knowledge. Other QA systems have been proposed to answer reading comprehension questions, however, they do not aggregate answers from multiple sources and they focus on general questions rather than quantity queries. 
+
+
+%On the other hand, we employ \emph{Deep Semantic Role Labeling  (DSRL)} to extract n-ary quantity facts, and provide a robust system to process and answer quantity queries.
+
+\subsubsection{Contribution.}
+The salient contributions of this work are as follows:
+\begin{itemize}
+\item We present Qsearch, a system for answering quantity queries from text.
+\item We propose a deep neural network for quantity fact extraction, and a matching model for answering quantity queries.
+\item  We present extensive experiments on benchmark queries collected by crowdsourcing.%, demonstrating the effectiveness of our approach with respect to the correctness of answers.
+
+%\item We make code, data and a running demo available to the research community at\\{\small\url{http://anonymous-for-double-blind-review/}}.
+\end{itemize}

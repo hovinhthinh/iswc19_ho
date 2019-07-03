@@ -1,0 +1,43 @@
+
+%!TEX root = ../main.tex
+
+\section{Conclusion}
+%We presented a method for learning rules that may contain negated atoms from KGs that
+%dynamically exploits feedback from a precomputed embedding model. 
+%Our approach is general in that any embedding model can be utilized including text-enhanced ones, which indirectly allows us to 
+%harness
+%unstructured 
+%web sources 
+%for rule learning.
+% We evaluated our approach with various configurations on real-world datasets and observed significant improvements
+%over state-of-the-art rule learning systems.\looseness=-1
+%
+%An interesting future direction is to extend our work to more complex non-monotonic rules with higher-arity predicates,
+%aggregates and existential variables or disjunctions in rule heads, which is challenging due to inevitable scalability issues.
+
+Awareness of entities and types has greatly advanced semantic search
+both for querying the web of linked data and for Internet search engines.
+In contrast, coping with quantities in text content and in query constraints
+has hardly received any attention, yet is an important case.
+This paper has presented the Qsearch system for full-fledged support of
+quantity queries, through new ways of information extraction and 
+answer matching and ranking.
+We capture quantities in their full extent, including units of measures,
+reference entities and the relevant contexts.
+The model for Qfacts and Qqueries is relatively simple but highly versatile and effective.
+%a more detailed structured modeling would not be able to cope with the
+%uncertainty in textual inputs and the approximate matching of candidate answers.
+A key asset of Qsearch is its high quality in extracting Qfacts,
+recognizing the right entity-quantity pairs even in complex sentences.
+
+Future work includes devising additional ways of aggregating Qfacts with
+the same candidate answer, so as to obtain strong signals from many
+noisy cues (i.e., when the same entity-quantity pair occurs in many pages,
+but mostly in the form of crude estimates or vague hints).
+Also, we plan to extend the Qquery model to incorporate queries that
+contain multiple quantity conditions (e.g., hybrid SUVs with range above 500 miles
+and energy consumption above 40 MPGe).
+
+
+
+
